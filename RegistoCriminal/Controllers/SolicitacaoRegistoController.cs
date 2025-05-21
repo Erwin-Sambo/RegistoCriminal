@@ -47,9 +47,6 @@ namespace RegistoCriminal.Controllers
         [HttpGet("solicitacaoRegisto", Name = "GesolicitacaoRegistosJudicial")]
         public async Task<ActionResult> GetsolicitacaoRegistosJudicial(int Id)
         {
-
-            //var user = await _userManager.FindByNameAsync(_httpContextAccessor.HttpContext.User.Identity.Name);
-            //var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
             try
             {
                 var solicitacaoRegistoRepo = await _solicitacaoRegistoRepositorio.GetModelByIdAsync(Id);
