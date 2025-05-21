@@ -113,7 +113,7 @@ namespace RegistoCriminal.Controllers
 
 
         [HttpDelete(Name = "DeleteRegistoCriminal")]
-        public async Task<ActionResult> Delete(int Id)
+        public async Task<ActionResult> DeleteRegistoCriminal(int Id)
         {
             try
             {

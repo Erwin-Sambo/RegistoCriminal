@@ -65,20 +65,6 @@ namespace RegistoCriminal.Controllers
             }
         }
 
-
-        //[HttpPost(Name = "AdcionarsolicitacaoRegisto")]
-        //public async Task<ActionResult> AdcionarsolicitacaoRegisto(SolicitacaoRegistoCreationDto solicitacaoRegistoDto)
-        //{
-        //    if (solicitacaoRegistoDto == null) throw new ArgumentNullException();
-
-        //    var solicitacaoRegistoEntity = _mapper.Map<Solicitacaoregisto>(solicitacaoRegistoDto);
-        //    _solicitacaoRegistoRepositorio.Adicionar(solicitacaoRegistoEntity, 5);
-        //    await _solicitacaoRegistoRepositorio.SaveAsync();
-
-
-        //    return NoContent();
-        //}
-
         [HttpPost(Name = "AdicionarSolicitacao")]
         public async Task<ActionResult> AdicionarSolicitacao(SolicitacaoRegistoCreationDto solicitacaoCreationDto)
         {
@@ -120,6 +106,29 @@ namespace RegistoCriminal.Controllers
             //        return NotFound();
             //    else return Conflict();
             //}
+        }
+
+
+        [HttpDelete(Name = "DeleteSolicitacao")]
+        public async Task<ActionResult> DeleteSolicitacao(int Id)
+        {
+            try
+            {
+                var solicitacaoFromRepo = await _solicitacaoRegistoRepositorio.GetModelByIdAsync(Id);
+                if (solicitacaoFromRepo == null) return NotFound();
+
+
+                var solicitacaoRegisto = _mapper.Map<Solicitacaoregisto>(solicitacaoFromRepo);
+
+                _solicitacaoRegistoRepositorio.Remover(solicitacaoRegisto, 55);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
     }
 }
