@@ -10,7 +10,6 @@ namespace RegistoCriminal.Servicos
     {
         private readonly RegistoCriminalContext _Context;
         private readonly DbSet<CertificadoRegisto> _contextCertificadoRegisto;
-        //private readonly DbSet<AspNetUser> _contextUsers;
         public CertificadoRegistoRepositorio(RegistoCriminalContext context)
         {
             _Context = context ??
@@ -18,9 +17,24 @@ namespace RegistoCriminal.Servicos
             _contextCertificadoRegisto = _Context.CertificadoRegistos ??
                 throw new ArgumentNullException();
         }
-        public Task<IEnumerable<IViewModel>?> GetFkComParametersAsync(ParametrosPages parametros, int fkId)
+        public async Task<IEnumerable<IViewModel>?> GetFkComParametersAsync(ParametrosPages parametros, int fkId)
         {
-            throw new NotImplementedException();
+            var certificados = (from c in _contextCertificadoRegisto
+                                join f in _Context.FuncionarioJudicials on c.IdFuncionarioEmissor equals f.Id
+                                join u in _Context.AspNetUsers on f.IdUtilizador equals u.Id
+                                where f.Id == fkId
+                                select new CertidicadoRegistoViewModel()
+                                {
+                                    Id = c.Id,
+                                    DataEmissao = c.DataEmissao,
+                                    DataValidade = c.DataValidade,
+                                    NumeroReferencia = c.NumeroReferencia,
+                                    Conteudo = c.Conteudo,
+                                    EstadoCertificado = c.EstadoCertificado,
+                                    FuncionarioEmissor = u.NomeCompleto
+                                });
+
+            return await certificados.Cast<IViewModel>().AsNoTracking().ToListAsync();
         }
 
         public Task<IEnumerable<CertificadoRegisto>?> GetFkComParametersNormalAsync(ParametrosPages parametros, int fkId)
@@ -28,9 +42,25 @@ namespace RegistoCriminal.Servicos
             throw new NotImplementedException();
         }
 
-        public Task<IViewModel?> GetModelByIdAsync(int Id)
+        public async Task<IViewModel?> GetModelByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            var certificados = (from c in _contextCertificadoRegisto
+                            join f in _Context.FuncionarioJudicials on c.IdFuncionarioEmissor equals f.Id
+                            join u in _Context.AspNetUsers on f.IdUtilizador equals u.Id
+                            where c.Id == Id
+                            select new CertidicadoRegistoViewModel()
+                            {
+                                Id = c.Id,
+                                DataEmissao = c.DataEmissao,
+                                DataValidade = c.DataValidade,
+                                NumeroReferencia = c.NumeroReferencia,
+                                Conteudo = c.Conteudo,
+                                EstadoCertificado = c.EstadoCertificado,
+                                FuncionarioEmissor = u.NomeCompleto
+                            });
+
+            return await certificados.AsNoTracking().FirstOrDefaultAsync();
+
         }
 
         public Task<IEnumerable<CertificadoRegisto>?> GetModelsByFkIdAsync(int fkId)
@@ -38,18 +68,29 @@ namespace RegistoCriminal.Servicos
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<IViewModel>?> GetTodosAsync(ParametrosPages parametros)
+        public async Task<IEnumerable<IViewModel>?> GetTodosAsync(ParametrosPages parametros)
         {
-            throw new NotImplementedException();
+            var certificados = (from c in _contextCertificadoRegisto
+                                join f in _Context.FuncionarioJudicials on c.IdFuncionarioEmissor equals f.Id
+                                join u in _Context.AspNetUsers on f.IdUtilizador equals u.Id
+                                select new CertidicadoRegistoViewModel()
+                                {
+                                    Id = c.Id,
+                                    DataEmissao = c.DataEmissao,
+                                    DataValidade = c.DataValidade,
+                                    NumeroReferencia = c.NumeroReferencia,
+                                    Conteudo = c.Conteudo,
+                                    EstadoCertificado = c.EstadoCertificado,
+                                    FuncionarioEmissor = u.NomeCompleto
+                                });
+
+            return await certificados.Cast<IViewModel>().AsNoTracking().ToListAsync();
         }
         
 
         public async Task<IEnumerable<CertificadoRegisto>?> GetTodosNormalAsync(ParametrosPages parametros)
         {
             if (parametros == null) throw new ArgumentNullException();
-
-            //var CertificadoRegistos = _contextCertificadoRegisto.AsNoTracking() as IQueryable<CertificadoRegisto>; 
-
 
             return await _contextCertificadoRegisto.AsNoTracking().ToListAsync();
         }
@@ -65,7 +106,7 @@ namespace RegistoCriminal.Servicos
             if (fkId <= 0) throw new ArgumentOutOfRangeException();
             if (model == null) throw new ArgumentNullException();
 
-            _contextCertificadoRegisto.Add(model);
+            _Context.Entry(model).State = EntityState.Modified;
         }
 
         public void Adicionar(CertificadoRegisto model, int fkId)
@@ -73,7 +114,7 @@ namespace RegistoCriminal.Servicos
             if (fkId <= 0) throw new ArgumentOutOfRangeException();
             if (model == null) throw new ArgumentNullException();
 
-            _contextCertificadoRegisto.Update(model);
+            _contextCertificadoRegisto.Add(model);
         }
 
         public void Remover(CertificadoRegisto model, int fkId)

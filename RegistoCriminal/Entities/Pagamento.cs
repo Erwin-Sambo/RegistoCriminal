@@ -26,10 +26,10 @@ public partial class Pagamento
     [Unicode(false)]
     public string? Referencia { get; set; }
 
-    //[Column("estado")]
-    //[StringLength(50)]
-    //[Unicode(false)]
-    //public string? Estado { get; set; }
+    [Column("estado")]
+    [StringLength(50)]
+    [Unicode(false)]
+    public string? Estado { get; set; }
 
     [Column("datapagamento", TypeName = "datetime")]
     public DateTime Datapagamento { get; set; }

@@ -40,8 +40,8 @@ public partial class CertificadoRegisto
     [Column("idSolicitacao")]
     public int IdSolicitacao { get; set; }
 
-    [Timestamp]
-    public byte[]? RowVersion { get; set; }
+    //[Timestamp]
+    //public byte[]? RowVersion { get; set; }
 
     [ForeignKey("IdFuncionarioEmissor")]
     [InverseProperty("CertificadoRegistos")]

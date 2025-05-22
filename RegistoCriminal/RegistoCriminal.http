@@ -1,6 +1,6 @@
-@RegistoCriminal_HostAddress = http://localhost:5165
+@RegistoCriminal_HostAddress = http://localhost:7206
 
-GET {{RegistoCriminal_HostAddress}}/weatherforecast/
+GET {{RegistoCriminal_HostAddress}}/api/cidadaos/
 Accept: application/json
 
 ###

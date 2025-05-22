@@ -73,7 +73,6 @@ namespace RegistoCriminal.Servicos
             if (fkId <= 0) throw new ArgumentOutOfRangeException();
             if (model == null) throw new ArgumentNullException();
 
-            _contextPagamento.Add(model);
             _contextPagamento.Entry(model).State = EntityState.Modified;
         }
 

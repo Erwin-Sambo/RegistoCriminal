@@ -27,7 +27,7 @@ namespace RegistoCriminal.Servicos
             if (parametros == null) throw new ArgumentNullException();
 
             var FuncionarioJudicials = (from c in _contextFuncionarioJudicial
-                            join u in _Context.AspNetUsers on c.IdUtilizador equals u.Id
+                            //join u in _Context.AspNetUsers on c.IdUtilizador equals u.Id
                             where c.IdUtilizador == fkId
                             select new FuncionarioJudicialViewModel()
                             {
@@ -73,7 +73,8 @@ namespace RegistoCriminal.Servicos
                                 Cargo = c.Cargo,
                                 Departamento = c.Departamento,
                                 Nivelacesso = c.Nivelacesso,
-                                IdUtilizador = c.IdUtilizador
+                                IdUtilizador = c.IdUtilizador,
+                                NomeCompleto = u.NomeCompleto
                             }).AsNoTracking();
 
             return await FuncionarioJudicials.FirstOrDefaultAsync();

@@ -37,7 +37,7 @@ namespace RegistoCriminal.Controllers
         public async Task<ActionResult> GetFuncionariosJudicial([FromQuery]ParametrosPages parametros) 
         {
             var funcionariosFromRepo = await _funcionarioJudicialRepositorio.GetTodosAsync(parametros);
-            var funcionarios = _mapper.Map<IEnumerable<FuncionarioJudicial>>(funcionariosFromRepo);
+            var funcionarios = _mapper.Map<IEnumerable<FuncionarioJudicialViewModelDto>>(funcionariosFromRepo);
             return Ok(funcionarios);
         }
 

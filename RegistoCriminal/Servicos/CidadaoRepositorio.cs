@@ -28,12 +28,12 @@ namespace RegistoCriminal.Servicos
             if (parametros == null) throw new ArgumentNullException();
 
             var cidadaos = (from c in _contextCidadao
-                            join u in _Context.AspNetUsers on c.IdUtilizador equals u.Id
+                            //join u in _Context.AspNetUsers on c.IdUtilizador equals u.Id
                             where c.IdUtilizador == fkId
                             select new CidadoViewModel()
                             {
                                 Id = c.Id,
-                                NomeCompleto = u.NomeCompleto,
+                                NomeCompleto = c.NomeCompleto,
                                 NumBi = c.NumBi,
                                 Endereco = c.Endereco,
                                 Provincia = c.Provincia,
@@ -69,12 +69,12 @@ namespace RegistoCriminal.Servicos
             if (Id <= 0) throw new ArgumentOutOfRangeException();
 
             var cidadaos = (from c in _contextCidadao
-                            join u in _Context.AspNetUsers on c.IdUtilizador equals u.Id
+                            //join u in _Context.AspNetUsers on c.IdUtilizador equals u.Id
                             where c.Id == Id 
                             select new CidadoViewModel()
                             {
                                 Id = c.Id,
-                                NomeCompleto = u.NomeCompleto,
+                                NomeCompleto = c.NomeCompleto,
                                 NumBi = c.NumBi,
                                 Endereco = c.Endereco,
                                 Provincia = c.Provincia,
@@ -92,11 +92,11 @@ namespace RegistoCriminal.Servicos
             if (parametros == null) throw new ArgumentNullException();
 
             var cidadaos = (from c in _contextCidadao
-                            join u in _Context.AspNetUsers on c.IdUtilizador equals u.Id
+                            //join u in _Context.AspNetUsers on c.IdUtilizador equals u.Id
                             select new CidadoViewModel()
                             {
                                 Id = c.Id,
-                                NomeCompleto = u.NomeCompleto,
+                                NomeCompleto = c.NomeCompleto,
                                 NumBi = c.NumBi,
                                 Endereco = c.Endereco,
                                 Provincia = c.Provincia,
@@ -152,7 +152,6 @@ namespace RegistoCriminal.Servicos
             if (fkId == null) throw new ArgumentOutOfRangeException();
             if (model == null) throw new ArgumentNullException();
 
-            //_contextCidadao.Update(model);
             _Context.Entry(model).State = EntityState.Modified;
         }
 

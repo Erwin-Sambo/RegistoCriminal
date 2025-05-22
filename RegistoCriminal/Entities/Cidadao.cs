@@ -18,6 +18,11 @@ public partial class Cidadao
     [Unicode(false)]
     public string NumBi { get; set; } = null!;
 
+    [Column("nomecompleto")]
+    [StringLength(150)]
+    [Unicode(false)]
+    public string NomeCompleto { get; set; } = null!;
+
     [Column("endereco")]
     [StringLength(100)]
     [Unicode(false)]
