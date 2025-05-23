@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RegistoCriminal.Dtos.RegistoCriminal;
 using RegistoCriminal.Entities;
@@ -7,6 +8,7 @@ using RegistoCriminal.Servicos;
 
 namespace RegistoCriminal.Controllers
 {
+    [Authorize]
     [Route("api/cidadaos/{cidadaoId:int}/registosCriminais")]
     [ApiController]
     public class RegistoCriminalController : ControllerBase

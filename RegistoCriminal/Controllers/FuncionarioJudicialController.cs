@@ -9,6 +9,8 @@ using RegistoCriminal.Servicos;
 
 namespace RegistoCriminal.Controllers
 {
+
+    [Authorize]
     [Route("api/funcionariosjudiciais")]
     [ApiController]
     public class FuncionarioJudicialController : ControllerBase

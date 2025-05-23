@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using RegistoCriminal.Data;
 using RegistoCriminal.Entities;
 using RegistoCriminal.Parametros;
@@ -10,18 +11,20 @@ namespace RegistoCriminal.Servicos
     {
         private readonly RegistoCriminalContext _Context;
         private readonly DbSet<CertificadoRegisto> _contextCertificadoRegisto;
-        public CertificadoRegistoRepositorio(RegistoCriminalContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public CertificadoRegistoRepositorio(RegistoCriminalContext context, UserManager<ApplicationUser> userManager)
         {
             _Context = context ??
                 throw new ArgumentNullException();
             _contextCertificadoRegisto = _Context.CertificadoRegistos ??
                 throw new ArgumentNullException();
+            _userManager = userManager;
         }
         public async Task<IEnumerable<IViewModel>?> GetFkComParametersAsync(ParametrosPages parametros, int fkId)
         {
             var certificados = (from c in _contextCertificadoRegisto
                                 join f in _Context.FuncionarioJudicials on c.IdFuncionarioEmissor equals f.Id
-                                join u in _Context.AspNetUsers on f.IdUtilizador equals u.Id
+                                join u in _userManager.Users on f.IdUtilizador equals u.Id
                                 where f.Id == fkId
                                 select new CertidicadoRegistoViewModel()
                                 {
@@ -46,7 +49,7 @@ namespace RegistoCriminal.Servicos
         {
             var certificados = (from c in _contextCertificadoRegisto
                             join f in _Context.FuncionarioJudicials on c.IdFuncionarioEmissor equals f.Id
-                            join u in _Context.AspNetUsers on f.IdUtilizador equals u.Id
+                            join u in _userManager.Users on f.IdUtilizador equals u.Id
                             where c.Id == Id
                             select new CertidicadoRegistoViewModel()
                             {
@@ -72,7 +75,7 @@ namespace RegistoCriminal.Servicos
         {
             var certificados = (from c in _contextCertificadoRegisto
                                 join f in _Context.FuncionarioJudicials on c.IdFuncionarioEmissor equals f.Id
-                                join u in _Context.AspNetUsers on f.IdUtilizador equals u.Id
+                                join u in _userManager.Users on f.IdUtilizador equals u.Id
                                 select new CertidicadoRegistoViewModel()
                                 {
                                     Id = c.Id,

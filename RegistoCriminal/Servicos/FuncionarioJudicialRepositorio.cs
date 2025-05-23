@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using RegistoCriminal.Data;
 using RegistoCriminal.Entities;
 using RegistoCriminal.Parametros;
@@ -10,13 +11,15 @@ namespace RegistoCriminal.Servicos
     {
         private readonly RegistoCriminalContext _Context;
         private readonly DbSet<FuncionarioJudicial> _contextFuncionarioJudicial;
+        private readonly UserManager<ApplicationUser> _userManager;
         //private readonly DbSet<AspNetUser> _contextUsers;
-        public FuncionarioJudicialRepositorio(RegistoCriminalContext context)
+        public FuncionarioJudicialRepositorio(RegistoCriminalContext context, UserManager<ApplicationUser> userManager)
         {
             _Context = context ??
                 throw new ArgumentNullException();
             _contextFuncionarioJudicial = _Context.FuncionarioJudicials ??
                 throw new ArgumentNullException();
+            _userManager = userManager;
             //_contextUsers = _context.AspNetUsers ??
             //    throw new ArgumentNullException();
         }
@@ -65,7 +68,7 @@ namespace RegistoCriminal.Servicos
             if (Id <= 0) throw new ArgumentOutOfRangeException();
 
             var FuncionarioJudicials = (from c in _contextFuncionarioJudicial
-                            join u in _Context.AspNetUsers on c.IdUtilizador equals u.Id
+                            join u in _userManager.Users on c.IdUtilizador equals u.Id
                             where c.Id == Id
                             select new FuncionarioJudicialViewModel()
                             {
@@ -86,7 +89,7 @@ namespace RegistoCriminal.Servicos
             if (parametros == null) throw new ArgumentNullException();
 
             var FuncionarioJudicials = (from c in _contextFuncionarioJudicial
-                            join u in _Context.AspNetUsers on c.IdUtilizador equals u.Id
+                            join u in _userManager.Users on c.IdUtilizador equals u.Id
                             select new FuncionarioJudicialViewModel()
                             {
                                 Id = c.Id,
