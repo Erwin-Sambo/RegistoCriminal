@@ -34,7 +34,7 @@ namespace RegistoCriminal.Controllers
             _logRopositorio = logRopositorio;
         }
 
-        [HttpGet("all-registoCriminals", Name = "GetregistoCriminalsJudicial")]
+        [HttpGet(Name = "GetregistoCriminalsJudicial")]
         public async Task<ActionResult> GetregistoCriminalsJudicial([FromQuery] ParametrosPages parametros)
         {
             var registoCriminalsFromRepo = await _registosCriminalRepositorio.GetTodosAsync(parametros);
@@ -43,15 +43,15 @@ namespace RegistoCriminal.Controllers
         }
 
 
-        [HttpGet("registoCriminal", Name = "GetregistosCriminal")]
-        public async Task<ActionResult> GetregistosCriminal(int Id)
+        [HttpGet("{registoCriminalID:int}", Name = "GetregistosCriminal")]
+        public async Task<ActionResult> GetregistosCriminal(int registoCriminalID)
         {
 
             //var user = await _userManager.FindByNameAsync(_httpContextAccessor.HttpContext.User.Identity.Name);
             //var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
             try
             {
-                var registoCriminalRepo = await _registosCriminalRepositorio.GetModelByIdAsync(Id);
+                var registoCriminalRepo = await _registosCriminalRepositorio.GetModelByIdAsync(registoCriminalID);
                 if (registoCriminalRepo == null)
                     return NotFound($"registoCriminal não encontrada");
 
@@ -69,7 +69,7 @@ namespace RegistoCriminal.Controllers
 
 
         [HttpPost(Name = "AdcionarregistoCriminal")]
-        public async Task<ActionResult> AdcionarregistoCriminal(RegistoCriminalCreationDto registoCriminalDto)
+        public async Task<IActionResult> AdcionarregistoCriminal(RegistoCriminalCreationDto registoCriminalDto)
         {
             if (registoCriminalDto == null) throw new ArgumentNullException();
 
@@ -82,7 +82,7 @@ namespace RegistoCriminal.Controllers
         }
 
         [HttpPut(Name = "UpdateregistoCriminal")]
-        public async Task<ActionResult> UpdateregistoCriminal(RegistoCriminalUpdateDto RegistoCriminal, int Id)
+        public async Task<IActionResult> UpdateregistoCriminal(RegistoCriminalUpdateDto RegistoCriminal, int Id)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace RegistoCriminal.Controllers
 
 
         [HttpDelete(Name = "DeleteRegistoCriminal")]
-        public async Task<ActionResult> DeleteRegistoCriminal(int Id)
+        public async Task<IActionResult> DeleteRegistoCriminal(int Id)
         {
             try
             {

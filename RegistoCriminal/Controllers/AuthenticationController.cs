@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RegistoCriminal.Data;
 using RegistoCriminal.Dtos;
@@ -15,27 +16,14 @@ namespace RegistoCriminal.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
-        public AuthenticationController(IHttpContextAccessor httpContext, UserManager<ApplicationUser> userManager, IConfiguration config)
+        public AuthenticationController(UserManager<ApplicationUser> userManager, IConfiguration config)
         {
-            _httpContextAccessor = httpContext;
             _userManager = userManager;
             _configuration = config;
         }
 
-        [HttpGet("claims")]
-        public async Task<IActionResult> GetClaims(string username)
-        {
-            var user = await _userManager.FindByNameAsync(username);
-            if (user == null)
-                return NotFound("User not found");
-
-            var claims = await _userManager.GetClaimsAsync(user);
-            return Ok(claims.Select(c => new { c.Type, c.Value }));
-        }
-
-        [Authorize]
+        [Authorize(Roles = "SuperAdministrador")]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto model)
         {
@@ -61,12 +49,26 @@ namespace RegistoCriminal.Controllers
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
                 return Unauthorized();
 
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            if (userRoles == null || userRoles.Count == 0)
+                return Unauthorized("User has no roles assigned");
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            // Add role claims
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            // Add custom claims (if any)
+            claims.AddRange(userClaims);
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -85,6 +87,14 @@ namespace RegistoCriminal.Controllers
                 expiration = token.ValidTo
             });
         }
-    
+
+
+        [Authorize(Roles = "SuperAdministrador")]
+        [HttpGet("users")]
+        public async Task<ActionResult> Users()
+        {
+            var users = await _userManager.Users.AsNoTracking().ToListAsync();
+            return Ok(users);
+        }
     }
 }

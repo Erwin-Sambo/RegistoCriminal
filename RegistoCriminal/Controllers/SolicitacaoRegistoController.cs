@@ -33,7 +33,7 @@ namespace RegistoCriminal.Controllers
             _logRopositorio = logRopositorio;
         }
 
-        [HttpGet("all-solicitacaoRegistos", Name = "GetsolicitacaoRegistosJudicial")]
+        [HttpGet(Name = "GetsolicitacaoRegistosJudicial")]
         public async Task<ActionResult> GetsolicitacaoRegistosJudicial([FromQuery] ParametrosPages parametros)
         {
             var solicitacoesRegistosFromRepo = await _solicitacaoRegistoRepositorio.GetTodosNormalAsync(parametros);
@@ -45,12 +45,12 @@ namespace RegistoCriminal.Controllers
         }
 
 
-        [HttpGet("solicitacaoRegisto", Name = "GesolicitacaoRegistosJudicial")]
-        public async Task<ActionResult> GetsolicitacaoRegistosJudicial(int Id)
+        [HttpGet("{solicitacaoRegistoID:int}", Name = "GesolicitacaoRegistosJudicial")]
+        public async Task<ActionResult> GetsolicitacaoRegistosJudicial(int solicitacaoRegistoID)
         {
             try
             {
-                var solicitacaoRegistoRepo = await _solicitacaoRegistoRepositorio.GetModelByIdAsync(Id);
+                var solicitacaoRegistoRepo = await _solicitacaoRegistoRepositorio.GetModelByIdAsync(solicitacaoRegistoID);
                 if (solicitacaoRegistoRepo == null)
                     return NotFound($"solicitacaoRegisto não encontrada");
 
@@ -67,7 +67,7 @@ namespace RegistoCriminal.Controllers
         }
 
         [HttpPost(Name = "AdicionarSolicitacao")]
-        public async Task<ActionResult> AdicionarSolicitacao(SolicitacaoRegistoCreationDto solicitacaoCreationDto)
+        public async Task<IActionResult> AdicionarSolicitacao(SolicitacaoRegistoCreationDto solicitacaoCreationDto)
         {
             if(solicitacaoCreationDto == null)throw new ArgumentNullException();
 
@@ -79,7 +79,7 @@ namespace RegistoCriminal.Controllers
         }
 
         [HttpPut(Name = "UpdatesolicitacaoRegisto")]
-        public async Task<ActionResult> UpdatesolicitacaoRegisto(SolicitacaoRegistoUpdateDto SolicitacaoRegisto, int Id)
+        public async Task<IActionResult> UpdatesolicitacaoRegisto(SolicitacaoRegistoUpdateDto SolicitacaoRegisto, int Id)
         {
             try
             {
@@ -111,7 +111,7 @@ namespace RegistoCriminal.Controllers
 
 
         [HttpDelete(Name = "DeleteSolicitacao")]
-        public async Task<ActionResult> DeleteSolicitacao(int Id)
+        public async Task<IActionResult> DeleteSolicitacao(int Id)
         {
             try
             {

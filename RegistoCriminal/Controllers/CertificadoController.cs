@@ -34,7 +34,7 @@ namespace RegistoCriminal.Controllers
             _logRopositorio = logRopositorio;
         }
 
-        [HttpGet("all-certificados", Name = "GetCertificados")]
+        [HttpGet(Name = "GetCertificados")]
         public async Task<ActionResult> GetCertificados([FromQuery] ParametrosPages parametros)
         {
             var CertificadosFromRepo = await certificadoRepositorio.GetTodosAsync(parametros);
@@ -43,15 +43,15 @@ namespace RegistoCriminal.Controllers
         }
 
 
-        [HttpGet("Certificado", Name = "GetCertificado")]
-        public async Task<ActionResult> GetCertificado(int Id)
+        [HttpGet("{CertificadoID:int}", Name = "GetCertificado")]
+        public async Task<ActionResult> GetCertificado(int CertificadoID)
         {
 
             //var user = await _userManager.FindByNameAsync(_httpContextAccessor.HttpContext.User.Identity.Name);
             //var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
             try
             {
-                var CertificadoRepo = await certificadoRepositorio.GetModelByIdAsync(Id);
+                var CertificadoRepo = await certificadoRepositorio.GetModelByIdAsync(CertificadoID);
                 if (CertificadoRepo == null)
                     return NotFound($"Certificado não encontrada");
 

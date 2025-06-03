@@ -33,7 +33,7 @@ namespace RegistoCriminal.Controllers
             _logRopositorio = logRopositorio;
         }
 
-        [HttpGet("all-Pagamentos", Name = "GetPagamentosJudicial")]
+        [HttpGet(Name = "GetPagamentosJudicial")]
         public async Task<ActionResult> GetPagamentosJudicial([FromQuery] ParametrosPages parametros)
         {
             var PagamentosFromRepo = await _PagamentoRepositorio.GetTodosNormalAsync(parametros);
@@ -42,15 +42,15 @@ namespace RegistoCriminal.Controllers
         }
 
 
-        [HttpGet("funcionrio", Name = "GetPagamento")]
-        public async Task<ActionResult> GetPagamento(int Id)
+        [HttpGet("{pagamentoID:int}", Name = "GetPagamento")]
+        public async Task<ActionResult> GetPagamento(int pagamentoID)
         {
 
             //var user = await _userManager.FindByNameAsync(_httpContextAccessor.HttpContext.User.Identity.Name);
             //var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
             try
             {
-                var PagamentoRepo = await _PagamentoRepositorio.GetModelByIdAsync(Id);
+                var PagamentoRepo = await _PagamentoRepositorio.GetModelByIdAsync(pagamentoID);
                 if (PagamentoRepo == null)
                     return NotFound($"Pagamento não encontrada");
 
@@ -66,7 +66,7 @@ namespace RegistoCriminal.Controllers
 
 
         [HttpPost("AdcionarPagamento")]
-        public async Task<ActionResult> AdcionarPagamento(PagamentoCreationDto PagamentoDto)
+        public async Task<IActionResult> AdcionarPagamento(PagamentoCreationDto PagamentoDto)
         {
             if (PagamentoDto == null) throw new ArgumentNullException();
 
@@ -79,10 +79,8 @@ namespace RegistoCriminal.Controllers
         }
 
 
-
-
         [HttpPut(Name = "UpdatePagamento")]
-        public async Task<ActionResult> UpdatePagamento(PagamentoUpdateDto Pagamentos, int Id)
+        public async Task<IActionResult> UpdatePagamento(PagamentoUpdateDto Pagamentos, int Id)
         {
             try
             {

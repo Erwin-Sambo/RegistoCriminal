@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using RegistoCriminal.Dtos.Cidadaos;
 using RegistoCriminal.Entities;
 using RegistoCriminal.Parametros;
 using RegistoCriminal.Servicos;
+using RegistoCriminal.ViewModels;
 
 namespace RegistoCriminal.Controllers
 {
@@ -31,9 +30,7 @@ namespace RegistoCriminal.Controllers
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-
-
-        [HttpGet("all", Name = "GetCidadaos")]
+        [HttpGet(Name = "GetCidadaos")]
         public async Task<ActionResult> GetCidadaos([FromQuery] ParametrosPages resourceParametersPages)
         {
 
@@ -44,16 +41,15 @@ namespace RegistoCriminal.Controllers
             return Ok(cidadaosDto);
         }
 
-
-        [HttpGet(Name = "GetCidadao")]
-        public async Task<ActionResult> GetCidadao(int Id)
+        [HttpGet(("{CidadaoId:int}"), Name = "GetCidadao")]
+        public async Task<ActionResult> GetCidadao(int CidadaoId)
         {
 
             //var user = await _userManager.FindByNameAsync(_httpContextAccessor.HttpContext.User.Identity.Name);
             //var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
             try
             {
-                var cidadaoRepo = await _cidadaoRepositorio.GetModelByIdAsync(Id);
+                var cidadaoRepo = await _cidadaoRepositorio.GetModelByIdAsync(CidadaoId);
                 if (cidadaoRepo == null)
                     return NotFound($"Cidadao não encontrada");
 
@@ -67,9 +63,8 @@ namespace RegistoCriminal.Controllers
             }
         }
 
-
         [HttpPost("AdcionarCidadao")]
-        public async Task<ActionResult> AdcionarCidadao(CidadaoCreationDto cidadaoDto)
+        public async Task<IActionResult> AdcionarCidadao(CidadaoCreationDto cidadaoDto)
         {
             if (cidadaoDto == null) throw new ArgumentNullException();
 
@@ -83,11 +78,8 @@ namespace RegistoCriminal.Controllers
             return CreatedAtRoute("GetCidadao", cidadaoEntity.Id);
         }
 
-
-
-
         [HttpPut(Name = "UpdateCidadao")]
-        public async Task<ActionResult> UpdateCidadao(UpdateCidadoDto cidadao, int Id)
+        public async Task<IActionResult> UpdateCidadao(UpdateCidadoDto cidadao, int Id)
         {
             try
             {

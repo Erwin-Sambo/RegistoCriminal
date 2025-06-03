@@ -35,7 +35,7 @@ namespace RegistoCriminal.Controllers
             _logRopositorio = logRopositorio;
         }
 
-        [HttpGet("all-funcionarios", Name = "GetFuncionariosJudicial")]
+        [HttpGet(Name = "GetFuncionariosJudicial")]
         public async Task<ActionResult> GetFuncionariosJudicial([FromQuery]ParametrosPages parametros) 
         {
             var funcionariosFromRepo = await _funcionarioJudicialRepositorio.GetTodosAsync(parametros);
@@ -44,15 +44,15 @@ namespace RegistoCriminal.Controllers
         }
 
 
-        [HttpGet("funcionrio", Name = "GetFuncionarioJudicial")]
-        public async Task<ActionResult> GetFuncionarioJudicial(int Id)
+        [HttpGet("{funcionarioId}", Name = "GetFuncionarioJudicial")]
+        public async Task<ActionResult> GetFuncionarioJudicial(int funcionarioId)
         {
 
             //var user = await _userManager.FindByNameAsync(_httpContextAccessor.HttpContext.User.Identity.Name);
             //var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
             try
             {
-                var funcionarioRepo = await _funcionarioJudicialRepositorio.GetModelByIdAsync(Id);
+                var funcionarioRepo = await _funcionarioJudicialRepositorio.GetModelByIdAsync(funcionarioId);
                 if (funcionarioRepo == null)
                     return NotFound($"Funcionario não encontrada");
 
@@ -68,7 +68,7 @@ namespace RegistoCriminal.Controllers
 
 
         [HttpPost("AdcionarFuncionario")]
-        public async Task<ActionResult> AdcionarFuncionario(FuncionarioCreationDto funcionarioDto)
+        public async Task<IActionResult> AdcionarFuncionario(FuncionarioCreationDto funcionarioDto)
         {
             if (funcionarioDto == null) throw new ArgumentNullException();
 
@@ -84,7 +84,7 @@ namespace RegistoCriminal.Controllers
 
 
         [HttpPut(Name = "UpdateFuncionario")]
-        public async Task<ActionResult> UpdateFuncionario(FuncionarioUpdateDto funcionario, int Id)
+        public async Task<IActionResult> UpdateFuncionario(FuncionarioUpdateDto funcionario, int Id)
         {
             try
             {

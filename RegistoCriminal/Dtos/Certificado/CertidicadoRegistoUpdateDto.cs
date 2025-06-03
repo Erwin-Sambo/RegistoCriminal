@@ -1,6 +1,8 @@
-﻿namespace RegistoCriminal.Dtos.Certificado
+﻿using RegistoCriminal.Dtos.Cidadaos;
+
+namespace RegistoCriminal.Dtos.Certificado
 {
-    public class CertidicadoRegistoUpdateDto
+    public class CertidicadoRegistoUpdateDto : BaseCertidicadoRegistoDto
     {
     }
 }
