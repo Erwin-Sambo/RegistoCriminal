@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RegistoCriminal.Data;
 using RegistoCriminal.Dtos;
+using RegistoCriminal.Entities;
 using System.Security.Claims;
 
 namespace RegistoCriminal.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "SuperAdministrador")]
     [ApiController]
     [Route("api/authorizations")]
     public class AuthorizationController : ControllerBase
@@ -16,14 +18,21 @@ namespace RegistoCriminal.Controllers
         //private readonly IAuthorizationService _authorizationService;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RegistoCriminalContext _registoCriminalContext;
+        private readonly IMapper _mapper;
+
         public AuthorizationController(
-            UserManager<ApplicationUser> userManager, 
-            RoleManager<IdentityRole> roleManager)
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            RegistoCriminalContext registoCriminalContext,
+            IMapper mapper)
         {
-            _userManager = userManager ?? 
+            _userManager = userManager ??
                 throw new ArgumentNullException(nameof(userManager));
             _roleManager = roleManager ??
                 throw new ArgumentNullException(nameof(roleManager));
+            _registoCriminalContext = registoCriminalContext;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -72,6 +81,23 @@ namespace RegistoCriminal.Controllers
             return Ok(claims.Select(c => new { c.Type, c.Value }));
         }
 
+        [HttpPost("claims")]
+        public async Task<IActionResult> AddClaim(AspSystemClaimsDto aspSystemClaims)
+        {
+            var hasClaim = await _registoCriminalContext.AspSystemsClaims.AnyAsync(c => c.Type == aspSystemClaims.Type && c.Value == aspSystemClaims.Value);
+
+            if (hasClaim)
+                return BadRequest("Claim já existe");
+
+            var systemclaims =  _mapper.Map<AspSystemClaims>(aspSystemClaims);
+
+            _registoCriminalContext.AspSystemsClaims.Add(systemclaims);
+
+            await _registoCriminalContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
         [HttpPost("roles")]
         public async Task<IActionResult> CreateRole(string roleName)
         {
@@ -83,10 +109,18 @@ namespace RegistoCriminal.Controllers
         }
 
         [HttpPost("users/{userId}/claims")]
-        public async Task<IActionResult> AddClaimToUser(string userId, [FromBody] ClaimDto claimDto)
+        public async Task<IActionResult> AddClaimToUser(string userId, [FromBody] int idclaim)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return NotFound("User not found");
+
+            var claimDto = await _registoCriminalContext.AspSystemsClaims
+                .Where(c => c.Id == idclaim)
+                .Select(c => new ClaimDto { Type = c.Type, Value = c.Value })
+                .FirstOrDefaultAsync();
+
+            if (claimDto == null)
+                return NotFound("Claim not found");
 
             var claim = new Claim(claimDto.Type, claimDto.Value);
             var result = await _userManager.AddClaimAsync(user, claim);

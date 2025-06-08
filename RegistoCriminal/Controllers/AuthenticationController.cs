@@ -93,8 +93,22 @@ namespace RegistoCriminal.Controllers
         [HttpGet("users")]
         public async Task<ActionResult> Users()
         {
-            var users = await _userManager.Users.AsNoTracking().ToListAsync();
-            return Ok(users);
+
+            //var roles = _roleManager.Roles.Select(r => new { r.Id, r.Name });
+            var users = _userManager.Users
+                .Select(u => new
+                {
+                    u.Id,
+                    u.UserName,
+                    u.Email,
+                    //Roles = _userManager.GetRolesAsync(u).Result
+                });
+
+            var _users = await users.AsNoTracking().ToListAsync();
+
+            //users = await _userManager.Users.AsNoTracking().ToListAsync();
+
+            return Ok(_users);
         }
     }
 }
